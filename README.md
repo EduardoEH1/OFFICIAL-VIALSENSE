@@ -1,46 +1,47 @@
 # VialSense
 
-VialSense is our hackathon prototype for helping manufacturing operators
-notice unexpected liquid-color patterns during recipe changes. The goal is to
-support quality inspection by measuring vial color during filling and
-comparing it with the expected pattern for the active recipe. A review alert
-is a signal for an operator to investigate; it is not an automatic line
-control or a confirmed contamination diagnosis.
+## Overview
 
-## How VialSense Works
+VialSense is a hackathon prototype that supports operator inspection during
+fluid filling. It measures liquid color, tracks vials, and compares reliable
+readings with provisional recipe profiles. A review alert prompts inspection;
+it does not control the line or confirm contamination.
+
+## How It Works
 
 VialSense connects four parts of the workflow:
 
-1. **Phase 1 — RGB/HSV Color Analysis:** The liquid finder locates the vial
-   and liquid region and measures RGB and OpenCV HSV. Phase 1 organizes those
+1. **Color Analysis:** The liquid finder locates the vial
+   and liquid region and measures RGB and OpenCV HSV. The analysis organizes
    readings by recipe, vial, timestamp, and fill progress for comparison and
    visualization.
-2. **Phase 2 — Anomaly Scoring:** The scoring module compares a reading
+2. **Anomaly Detection:** The scoring module compares a reading
    with a provisional recipe profile for the corresponding filling stage. It
    returns a score and status, or abstains when the reading or context is not
    reliable enough to score.
-3. **Live Mode:** Tracks vial arrival and liquid rise, estimates fill
+3. **Live Tracking:** Tracks vial arrival and liquid rise, estimates fill
    progress, and assigns the next recipe from an operator-provided queue. The
    recipe is not inferred from color. If the recipe sequence is unknown, it
    can still track vials and show RGB/HSV readings without recipe assignment
    or anomaly scores.
-4. **Operator Dashboard:** Displays the live camera, measured color, fill progress,
-   and anomaly status. Operators can use automatic tracking or provide recipe
-   and progress manually when needed.
+4. **Operator Dashboard:** Displays the live camera, measured color, fill
+   progress, and anomaly status. Automatic mode includes a recipe-change
+   warning, the latest vial verdict and explanation, and a table of completed
+   vials. Operators can provide recipe and progress manually when needed.
 
 The project also supports saved-data analysis and replaying Dataset 2 Video 5.
-For implementation details, see the [Phase 1 results and methodology](results/corrected/README.md),
-[Phase 2 methodology](results/corrected/phase2/README.md),
-[Live Mode guide](LIVE_MODE.md), and [dashboard setup](DASHBOARD_SETUP.md).
+For implementation details, see [Color Analysis](results/corrected/README.md),
+[Anomaly Detection](results/corrected/phase2/README.md), [Live Tracking](LIVE_MODE.md),
+and [Dashboard Setup](DASHBOARD_SETUP.md).
 
 ## Testing at CSI
 
 On October 30, our team visited the UWM Connected Systems Institute (CSI) and
 connected the fluid mixing station's camera to the dashboard. We observed live
 vial detection, color measurements, and anomaly scores. The session gave us a
-working end-to-end demonstration and helped us identify improvements to liquid
-detection and fill-progress handling. We updated the integration afterward;
-the updated version has not yet been retested on the physical CSI station.
+working end-to-end demonstration and helped identify opportunities to improve
+liquid detection and fill-progress handling. The current code has been replayed
+on a CSI recording, but has not been retested live on the physical station.
 
 ## Results
 
@@ -83,8 +84,8 @@ or confirm the vial count. The replay verified color-only tracking without
 recipe context or anomaly scores. These results demonstrate the prototype's
 workflows; they do not validate contamination detection.
 
-See the [combined Phase 1 recipe summary](results/corrected/phase1/recipe_summary.csv),
-[Phase 2 frame scores](results/corrected/phase2/frame_predictions.csv), and
+See the [combined recipe summary](results/corrected/phase1/recipe_summary.csv),
+[anomaly scores by frame](results/corrected/phase2/frame_predictions.csv), and
 [temporal comparison](results/temporal_analysis/consolidated/README.md).
 
 ## Limitations and Future Improvements
@@ -95,7 +96,7 @@ alignment, liquid visibility, or a missed vial can affect measurements or
 recipe/fill context. A new physical CSI station test, camera calibration, and
 connections to machine-provided recipe and fill signals are useful next steps.
 Detailed measurement, tracker, and scoring caveats are documented in the
-[dashboard guide](DASHBOARD_SETUP.md), [Live Mode guide](LIVE_MODE.md), and
+[dashboard guide](DASHBOARD_SETUP.md), [Live Tracking guide](LIVE_MODE.md), and
 [runbook](RUNBOOK.md).
 
 ## Installation and Usage
@@ -110,7 +111,8 @@ python -m pip install -r requirements.txt
 python -m pip install -r requirements-dashboard.txt
 ```
 
-Run the tests and rebuild Phase 1/Phase 2 outputs to a separate review folder:
+Run the tests and rebuild the color analysis and anomaly-scoring outputs to a
+separate review folder:
 
 ```bash
 PYTHONPATH=src python -m pytest -q
@@ -142,13 +144,13 @@ instructions.
 
 | Path | Contents |
 |---|---|
-| `src/vialsense/` | Reusable Phase 1, Phase 2, detector integration, and Live Mode code |
+| `src/vialsense/` | Reusable color analysis, anomaly detection, detector integration, and live tracking code |
 | `app.py` | Streamlit operator dashboard |
 | `inputs/color_check/` | Saved Video 5 measurements and recipe/fill labels |
-| `results/corrected/phase1/` | Current RGB/HSV timelines, summaries, and plots |
+| `results/corrected/phase1/` | RGB/HSV timelines, summaries, and plots |
 | `results/corrected/phase2/` | Provisional recipe profiles and anomaly scores |
 | `results/integration/` | Saved detector-to-scoring examples and documentation |
 | `results/temporal_analysis/` | Temporal recipe analysis and comparison |
 | `results/recipe_5`–`results/recipe_14` | Earlier exploratory manual-ROI samples |
-| `tests/` | Phase 2, integration, and live-tracker tests |
+| `tests/` | Anomaly-scoring, integration, and live-tracking tests |
 | `RUNBOOK.md` / `RUNBOOK.pdf` | Setup, replay, dashboard, and troubleshooting steps |

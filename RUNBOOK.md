@@ -1,6 +1,6 @@
 # VialSense Runbook
 
-This runbook installs, tests, and runs the integrated color-analysis prototype.
+This runbook explains how to install, test, and run the VialSense prototype.
 Commands start from the project root. Python 3.10 or newer is recommended.
 
 ## 1. Create the Python environment
@@ -48,8 +48,8 @@ Send output to a review directory so the checked-in results are not overwritten:
 PYTHONPATH=src python -m vialsense.corrected_cli build --output-dir /tmp/vialsense-review
 ```
 
-This rebuilds Phase 1 timelines and Phase 2 provisional profiles from the saved
-Dataset 2 RGB/HSV readings and corrected labels.
+This rebuilds the RGB/HSV timelines and provisional anomaly profiles from the
+saved Dataset 2 measurements and fill labels.
 
 ## 4. Replay automatic live tracking on Dataset 2 Video 5
 
@@ -64,7 +64,7 @@ PYTHONPATH=src python -m vialsense.live_cli run \
 
 This detects vials, assigns recipes from the operator queue, estimates fill
 progress from the detected liquid rise, calculates RGB/HSV, and scores usable
-readings with Phase 2. The output folder includes frame readings, per-vial
+readings with the anomaly detector. The output folder includes frame readings, per-vial
 summaries, events, and a run summary. Use the correct queue for the video; queue
 misalignment shifts recipe assignments.
 
@@ -119,6 +119,7 @@ Recipe profiles and anomaly scores are exploratory. Dataset 2 does not provide
 confirmed contamination labels, so `FLAG` or `review_unusual` requests an
 operator review and does not confirm contamination or product failure. RGB/HSV
 values depend on lighting, camera alignment, reflections, fill level, and the
-finder's selected region. The Video 5 replay supports the Dataset 2 view only;
-the CSI camera and browser-camera workflow still need testing on the actual
-setup.
+finder's selected region. The current tracker was replayed on Video 5 and on an
+unlabeled CSI recording; the CSI replay supports detector/tracker checks only
+and does not provide recipe-based anomaly results. The updated workflow has
+not yet been retested with a live camera on the physical CSI station.

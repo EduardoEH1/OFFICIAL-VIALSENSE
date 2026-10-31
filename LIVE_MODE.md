@@ -1,9 +1,9 @@
-# Live mode
+# Live Tracking
 
 Runs the full check on a live camera at the fill station:
 
 ```
-camera -> calibration -> liquid finder -> vial tracker + recipe queue -> Phase 2 score -> verdict + cause
+camera -> calibration -> liquid finder -> vial tracker + recipe queue -> anomaly score -> verdict + explanation
 ```
 
 ![Archived live-mode preview](results/live/live_screen.jpg)
@@ -14,7 +14,7 @@ current verdict panel and does not represent the latest replay results.*
 ## Recorded video and live camera inputs
 
 On video 5, the label file tells the code which recipe each vial runs and when
-it fills. A live camera sends pictures only. Live mode supplies both itself:
+it fills. A live camera sends pictures only. Live Tracking supplies both itself:
 
 - **Timing from the camera.** The tracker sees each vial arrive, the liquid
   start to rise, and the vial leave.
@@ -37,7 +37,7 @@ pip uninstall -y opencv-python-headless
 pip install opencv-python
 ```
 
-Without a screen (Linux server), live mode runs without a window. Add
+Without a screen (Linux server), live tracking runs without a window. Add
 `--record screen.mp4` to save what the window would show.
 
 Set the import path from the repo root:
@@ -123,7 +123,7 @@ Each run saves to `results/live/run_<date>_<time>/`:
 
 ## Replay a recording as live
 
-Tests live mode end to end, and works as a backup demo:
+Tests live tracking end to end, and works as a backup demo:
 
 ```
 python -m vialsense.live_cli run --video data/raw/dataset2/vial_fill/videos/vial_fill_video_5.mp4 --recipes "5x3,6x3,7x3,8x3,9x3,10x3,11x3,12x3,13x3,14x3" --realtime
@@ -157,7 +157,7 @@ descriptive check rather than validated accuracy.
 
 ## Limits
 
-- **Recipes need a profile.** The Phase 2 model has profiles for Recipes 5 to
+- **Recipes need a profile.** The anomaly model has profiles for Recipes 5 to
   14 only. A recipe outside that set gets no score until a profile exists for it.
 - **The queue must match the machine.** A wrong or shifted queue puts every
   later vial on the wrong recipe. Use `n` and `b` to fix it during a run.
